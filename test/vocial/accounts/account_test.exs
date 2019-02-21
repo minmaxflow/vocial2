@@ -4,13 +4,13 @@ defmodule Vocial.AccountsTest do
   alias Vocial.Accounts
 
   describe "users" do
-    @valid_attrs %{username: "test", email: "test@test.com", active: true}
+    @valid_attrs %{username: "test", email: "test@test.com", active: true, password: "test", password_confirmation: "test"}
 
     def user_fixture(attrs \\ %{}) do 
       with create_attrs <- Map.merge(@valid_attrs, attrs),
           {:ok, user} <- Accounts.create_user(create_attrs)
       do 
-        user
+        user |> Map.merge(%{password: nil, password_confirmation: nil})
       end
     end
 
@@ -35,6 +35,16 @@ defmodule Vocial.AccountsTest do
       updated = Accounts.list_user()
       assert !Enum.any?(before, fn u -> user == u end)
       assert Enum.any?(updated, fn u -> user == u end)
+    end
+
+    test "create_user/1 fails to create the user without a password and password_confirmation" do 
+      {:error, changeset} = user_fixture(%{password: nil, password_confirmation: nil})
+      assert !changeset.valid?
+    end
+
+    test "create_user/1 fails to create the user when the password and the password_confirmation don't match" do 
+      {:error, changeset} = user_fixture(%{password: "test", password_confirmation: "test2"})
+      assert !changeset.valid?
     end
 
   end

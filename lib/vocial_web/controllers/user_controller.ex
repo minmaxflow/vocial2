@@ -13,6 +13,11 @@ defmodule VocialWeb.UserController do
       conn 
       |> put_flash(:info, "User created")
       |> redirect(to: user_path(conn, :show, user))
+    else
+      {:error, user} ->
+        conn
+        |> put_flash(:error, "Faild to create user!")
+        |> render("new.html", user: user)
     end
   end
 
