@@ -20,6 +20,11 @@ defmodule VocialWeb.Router do
 
     resources "/polls", PollController, only: [:index, :new, :create]
     resources "/users", UserController, only: [:new, :show, :create]
+
+    resources "/sessions", SessionController, only: [:create]
+    get "/login", SessionController, :new 
+    get  "/logout", SessionController, :delete
+
   end
 
   # Other scopes may use custom stacks.
