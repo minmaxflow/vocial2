@@ -1,5 +1,7 @@
-<h2>Poll: <%= @poll.title %></h2>
-<%= for {option, votes} <- @poll.options do %>
-  <strong><%= option %></strong>: <%= votes %> votes
+<%= for poll <- @polls do  %>
+  <h2><%= poll.title %></h2>
+  <%= for option <- poll.options do %>
+  <strong><%= option.title %></strong>: <%= option.votes%> 
   <br />
+  <% end %>
 <% end %>
