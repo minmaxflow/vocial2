@@ -2,10 +2,12 @@ defmodule Vocial.Votes.Poll do
   use Ecto.Schema
   import Ecto.Changeset
   alias Vocial.Votes.{Poll, Option}
+  alias Vocial.Accounts.User
 
   schema "polls" do 
     field :title, :string
 
+    belongs_to :user, User
     has_many :options, Option
 
     timestamps()
@@ -13,8 +15,8 @@ defmodule Vocial.Votes.Poll do
 
   def chageset(%Poll{} = poll, attrs) do 
     poll
-    |>cast(attrs, [:title])
-    |>validate_required([:title])
+    |>cast(attrs, [:title, :user_id])
+    |>validate_required([:title, :user_id])
   end
 
 end
