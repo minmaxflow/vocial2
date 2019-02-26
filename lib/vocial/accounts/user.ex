@@ -24,7 +24,18 @@ defmodule Vocial.Accounts.User do
     |> cast(attrs, [:username, :email, :active, :password, :password_confirmation])
     |> validate_confirmation(:password, message: "does not match password!")
     |> encrypt_password()
+    |> validate_not_fake(:email)
     |> validate_required([:username, :email, :active, :encrypted_password])
+    |> validate_format(:email, ~r/@/)
+    |> validate_length(:username, min: 3, max: 100)
+    |> unique_constraint(:username)
+  end
+
+  def validate_not_fake(changeset, key) do 
+    case get_change(changeset, key) do 
+      "test@fake.com" -> add_error(changeset, key, "cannot be a fake email")
+      _ -> changeset
+    end
   end
 
   def encrypt_password(changeset) do 
