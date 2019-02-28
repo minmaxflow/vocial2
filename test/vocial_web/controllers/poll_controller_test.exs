@@ -9,7 +9,8 @@ defmodule VocialWeb.PollControllerTest do
       password: "test",
       password_confirmation: "test"
     })
-    {:ok, conn: conn, user: user}
+    {:ok, poll} = Vocial.Votes.create_poll_with_options(%{title: "My New Test Poll", user_id: user.id}, ["One","Two","Three"])
+    {:ok, conn: conn, user: user, poll: poll}
   end
 
   test "GET /polls", %{conn: conn, user: user} do 
@@ -19,7 +20,7 @@ defmodule VocialWeb.PollControllerTest do
     assert html_response(conn, 200) =~ poll.title
     Enum.each(poll.options, fn option -> 
       assert html_response(conn, 200) =~ option.title
-      assert html_response(conn, 200) =~ ": #{option.votes}"
+      assert html_response(conn, 200) =~ "#{option.votes}"
     end)
   end
 
@@ -49,6 +50,17 @@ defmodule VocialWeb.PollControllerTest do
     conn = post(conn, "/polls", %{"poll" => %{"title" => "Test Poll"}, "options" => "A,B,C"})
     assert redirected_to(conn) == "/"
     assert get_flash(conn, :error) == "You must be logged in to do that!"
+  end
+
+  test "GET /options/:id/vote", %{conn: conn, poll: poll} do 
+    option = Enum.at(poll.options, 0)
+    before_votes = option.votes 
+    conn = get conn, "/options/#{option.id}/vote"
+    after_option = Vocial.Repo.get!(Vocial.Votes.Option, option.id)
+
+    assert after_option.votes == (before_votes+ 1)
+    assert html_response(conn, 302)
+    assert redirected_to(conn) == "/polls"
   end
   
   defp login(conn, user) do 
