@@ -2,10 +2,10 @@ defmodule Vocial.Votes do
     import Ecto.Query, warn: false
 
     alias Vocial.Repo
-    alias Vocial.Votes.{Poll, Option}
+    alias Vocial.Votes.{Poll, Option, Image}
 
     def list_polls do
-      Repo.all(Poll) |> Repo.preload([:options])
+      Repo.all(Poll) |> Repo.preload([:options, :image])
     end
 
     def list_options do 
@@ -16,11 +16,14 @@ defmodule Vocial.Votes do
       Poll.chageset(%Poll{}, %{})
     end
 
-    def create_poll_with_options(poll_attrs, options) do 
+    def create_poll_with_options(poll_attrs, options, image_data) do 
       Repo.transaction(fn -> 
         with {:ok, poll} <- create_poll(poll_attrs),
-             {:ok, _options} <- create_options(options, poll)
+             {:ok, _options} <- create_options(options, poll),
+             {:ok, filename} <- upload_file(poll_attrs, poll),
+             {:ok, _upload} <- save_upload(poll, image_data, filename)
         do 
+          # no need to preload?
           poll |> Repo.preload([:options])
         else
           _ -> Repo.rollback("Failed to create poll!") 
@@ -67,7 +70,30 @@ defmodule Vocial.Votes do
     end
 
     def get_poll(id) do 
-      Repo.get!(Poll, id) |> Repo.preload([:options])
+      Repo.get!(Poll, id) |> Repo.preload([:options, :image])
+    end
+
+    defp upload_file(%{"image" => image, "user_id" => user_id}, poll) do 
+      extension = Path.extname(image.filename)
+      filename = "#{user_id}=#{poll.id}-image#{extension}"
+      File.copy(image.path, "./uploads/#{filename}")
+      {:ok, filename}
+    end
+
+    defp upload_file(_, _), do: {:ok, nil}
+
+    defp save_upload(_poll, _image_data, nil), do: {:ok, nil}
+    defp save_upload(poll, %{"caption" => caption, "alt_text" => alt_text}, filename) do 
+      attrs = %{
+        url: "/uploads/#{filename}",
+        alt: alt_text,
+        caption: caption,
+        poll_id: poll.id,
+        user_id: poll.user_id
+      }
+      %Image{}
+      |> Image.changeset(attrs)
+      |> Repo.insert()
     end
 end
 

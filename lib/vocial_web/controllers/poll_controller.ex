@@ -16,11 +16,11 @@ defmodule VocialWeb.PollController do
     render(conn, "new.html", poll: poll)
   end
 
-  def create(conn, %{"poll" => poll_params, "options" => options}) do 
+  def create(conn, %{"poll" => poll_params, "options" => options, "image_data" => image_data}) do 
     split_options = String.split(options, ",")
     with user <- get_session(conn, :user),
          poll_params <- Map.put(poll_params, "user_id", user.id),
-      {:ok, poll} <- Votes.create_poll_with_options(poll_params, split_options) 
+      {:ok, poll} <- Votes.create_poll_with_options(poll_params, split_options, image_data) 
     do 
       conn 
       |> put_flash(:info, "Poll created successfully!")
