@@ -18,7 +18,7 @@ defmodule VocialWeb.Router do
 
     get "/", PageController, :index
 
-    resources "/polls", PollController, only: [:index, :new, :create]
+    resources "/polls", PollController, only: [:index, :new, :create, :show]
     get "/options/:id/vote", PollController, :vote
 
     resources "/users", UserController, only: [:new, :show, :create]

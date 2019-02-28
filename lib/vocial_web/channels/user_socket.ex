@@ -2,7 +2,7 @@ defmodule VocialWeb.UserSocket do
   use Phoenix.Socket
 
   ## Channels
-  # channel "room:*", VocialWeb.RoomChannel
+  channel "polls:*", VocialWeb.PollsChannel
 
   ## Transports
   transport :websocket, Phoenix.Transports.WebSocket

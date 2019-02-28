@@ -62,6 +62,11 @@ defmodule VocialWeb.PollControllerTest do
     assert html_response(conn, 302)
     assert redirected_to(conn) == "/polls"
   end
+
+  test "GET /polls/:id", %{conn: conn, poll: poll} do 
+    conn = get conn, "/polls/#{poll.id}"
+    assert html_response(conn, 200) =~ poll.title
+  end
   
   defp login(conn, user) do 
     post(conn, "/sessions", %{username: user.username, password: user.password})

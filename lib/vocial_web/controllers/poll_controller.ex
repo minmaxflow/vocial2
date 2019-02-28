@@ -27,9 +27,15 @@ defmodule VocialWeb.PollController do
       |> redirect(to: poll_path(conn, :index))
     else
       {:error, poll} -> 
-        conn 
+        conn
         |> put_flash(:alert, "Error creating poll!")
         |> redirect(to: poll_path(conn, :new))
+    end
+  end
+
+  def show(conn, %{"id" => id}) do 
+    with poll <- Votes.get_poll(id) do
+      render(conn, "show.html", %{poll: poll})
     end
   end
 
