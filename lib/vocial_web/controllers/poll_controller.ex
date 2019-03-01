@@ -5,10 +5,12 @@ defmodule VocialWeb.PollController do
 
   plug VocialWeb.VerifyUserSession when action in [:new, :create]  
 
-  def index(conn, _params) do 
-    polls = Votes.list_polls()
-
-    render(conn, "index.html", polls: polls)
+  # http://localhost:4000/polls?page=3&per_page=2
+  def index(conn, params) do 
+    %{"page" => page, "per_page" => per_page} = normalize_paging_params(params)
+    polls = Votes.list_most_recent_polls_with_extra(page, per_page)
+    opts = paging_options(polls, page, per_page)
+    render(conn, "index.html", polls: Enum.take(polls, per_page), opts: opts)
   end
 
   def new(conn, _params) do 
@@ -58,4 +60,36 @@ defmodule VocialWeb.PollController do
            |> redirect(to: poll_path(conn, :index)) 
     end
   end
+
+  # paging 
+  defp paging_params(%{"page" => page, "per_page" => per_page}) do 
+    page = case is_binary(page) do 
+      true -> String.to_integer(page)
+      _ -> page
+    end
+    per_page = case is_binary(per_page) do 
+      true -> String.to_integer(per_page)
+      _ -> per_page
+    end
+    # 前端假设从1开始分页
+    %{"page" => page - 1, "per_page" => per_page}
+  end
+
+  defp normalize_paging_params(params) do 
+    %{"page" => 1, "per_page" => 25}
+    |> Map.merge(params)
+    |> paging_params()
+  end
+
+  # 比per_page多请求一个数据，这样能判断是否还有数据
+  defp paging_options(polls, page, per_page) do 
+    %{
+      include_next_page: Enum.count(polls) > per_page,
+      include_prev_page: page > 0, 
+      # 前端从1开始分页
+      page: page + 1,
+      per_page: per_page
+    }
+  end
+
 end
