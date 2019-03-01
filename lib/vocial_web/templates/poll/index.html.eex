@@ -1,4 +1,4 @@
 
 <%= for poll <- @polls do  %>
-  <%= render("_poll.html", %{poll: poll}) %>
+  <%= render("_poll.html", %{poll: poll, conn: @conn}) %>
 <% end %>

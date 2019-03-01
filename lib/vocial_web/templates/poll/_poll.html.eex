@@ -1,5 +1,5 @@
 <div class="poll-display">
-  <h2>Poll: <%= @poll.id %>.<%= @poll.title %></h2>
+  <h2><%= link "Poll: #{@poll.id}. #{@poll.title}", to: poll_path(@conn, :show, @poll) %></h2>
   <%= if @poll.image do %>
   <div class="image-display">
     <image src="<%= @poll.image.url %>" alt="<%= @poll.image.alt %>" style="width: 350px;"/>

@@ -1,6 +1,6 @@
 alias Vocial.Repo
 alias Vocial.Votes
-alias Vocial.Votes.{Poll, Option}
+alias Vocial.Votes.{Poll, Option, VoteRecord, Message}
 alias Vocial.Accounts
 alias Vocial.Accounts.User
 

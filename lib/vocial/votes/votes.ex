@@ -2,10 +2,10 @@ defmodule Vocial.Votes do
     import Ecto.Query, warn: false
 
     alias Vocial.Repo
-    alias Vocial.Votes.{Poll, Option, Image, VoteRecord}
+    alias Vocial.Votes.{Poll, Option, Image, VoteRecord, Message}
 
     def list_polls do
-      Repo.all(Poll) |> Repo.preload([:options, :image, :vote_records])
+      Repo.all(Poll) |> Repo.preload([:options, :image, :vote_records, :messages])
     end
 
     def list_options do 
@@ -13,7 +13,7 @@ defmodule Vocial.Votes do
     end
 
     def get_poll(id) do 
-      Repo.get!(Poll, id) |> Repo.preload([:options, :image, :vote_records])
+      Repo.get!(Poll, id) |> Repo.preload([:options, :image, :vote_records, :messages])
     end    
 
     def new_poll do 
@@ -112,5 +112,31 @@ defmodule Vocial.Votes do
       |> Image.changeset(attrs)
       |> Repo.insert()
     end
+
+    # message
+
+    def list_lobby_messages do 
+      query = from m in Message, 
+              where: is_nil(m.poll_id),
+              order_by: [desc: :inserted_at],
+              limit: 100
+      Repo.all(query)
+    end
+
+    def list_poll_messages(poll_id) do 
+      query = from m in Message,
+              where: m.poll_id == ^poll_id,
+              order_by: [desc: :inserted_at],
+              limit: 100,
+              preload: [:poll]
+      Repo.all(query)
+    end
+
+    def create_message(attrs) do 
+      %Message{}
+      |> Message.changeset(attrs)
+      |> Repo.insert()
+    end
+
 end
 
