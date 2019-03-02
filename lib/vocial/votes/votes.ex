@@ -13,7 +13,7 @@ defmodule Vocial.Votes do
     end
 
     def get_poll(id) do 
-      Repo.get!(Poll, id) |> Repo.preload([:options, :image, :vote_records, :messages])
+      Repo.get(Poll, id) |> Repo.preload([:options, :image, :vote_records, :messages])
     end    
 
     def list_most_recent_polls(page \\ 0, per_page \\ 25) do 

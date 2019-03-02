@@ -17,6 +17,8 @@ defmodule Vocial.Accounts.User do
     field :oauth_provider, :string 
     field :oauth_id, :string
 
+    field :api_key, :string
+
     has_many :polls, Poll
     has_many :images, Image
 
@@ -25,7 +27,7 @@ defmodule Vocial.Accounts.User do
 
   def changeset(%User{}=user, attrs) do 
     user 
-    |> cast(attrs, [:username, :email, :active, :password, :password_confirmation, :oauth_provider, :oauth_id])
+    |> cast(attrs, [:username, :email, :active, :password, :password_confirmation, :oauth_provider, :oauth_id, :api_key])
     |> validate_confirmation(:password, message: "does not match password!")
     |> encrypt_password()
     |> validate_not_fake(:email)

@@ -1,1 +1,14 @@
 <h2><%= @user.username %>'s Profile</h2>
+
+<br />
+
+<div class="api-key-section">
+  <h3>API Key</h3>
+  <hr/>
+  <%= if api_key = @user.api_key do %>
+    <srong>Key: </strong><%= api_key %>  
+  <% end %>
+  <%= form_for @conn, "/users/#{@user.id}/generate_api_key", [as: :user], fn _f -> %>
+    <%= submit "Generate API Key", class: "btn btn-primary" %>
+  <% end %>
+</div>

@@ -26,4 +26,20 @@ defmodule VocialWeb.UserController do
       render(conn, "show.html", user: user)
     end
   end
+
+  def generate_api_key(conn, %{"id" => id}) do 
+    user = Accounts.get_user(id)
+
+    case Accounts.generate_api_key(user) do 
+      {:ok, _} -> 
+          conn 
+          |> put_flash(:info, "Update API key for user!")
+          |> redirect(to: user_path(conn, :show, user))
+      {:error, _} -> 
+          conn 
+          |> put_flash(:error, "Failed to generate API key for user!")
+          |> redirect(to: user_path(conn, :show, user))
+    end
+  end
+  
 end

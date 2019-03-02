@@ -1,6 +1,18 @@
 defmodule VocialWeb.ErrorView do
   use VocialWeb, :view
 
+  def render("invalid_api_key.json", _assigns) do 
+    %{message: "Invalid API Key"}
+  end
+
+  def render("404.json", _assigns) do 
+    %{message: "Resource not found"}
+  end
+
+  def render("500.json", _assigns) do 
+    %{message: "An unhandled exception has occurred"}
+  end
+
   def render("404.html", _assigns) do
     "Page not found"
   end
