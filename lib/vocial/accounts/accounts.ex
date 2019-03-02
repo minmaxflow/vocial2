@@ -26,4 +26,8 @@ defmodule Vocial.Accounts do
     Repo.get_by(User, username: username)
   end
 
+  def get_user_by_oauth(oauth_provider, oauth_id) do 
+    Repo.get_by(User, oauth_provider: oauth_provider, oauth_id: oauth_id)
+  end
+
 end

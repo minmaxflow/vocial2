@@ -13,3 +13,6 @@
     <%= submit "Login"%>
   <%  end %>
 </div>
+
+<hr />
+<%= link "Login with Google", to: "/auth/google" %>

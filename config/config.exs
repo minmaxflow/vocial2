@@ -25,3 +25,13 @@ config :logger, :console,
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env}.exs"
+
+config :ueberauth, Ueberauth,
+  providers: [
+    google: {Ueberauth.Strategy.Google, []}
+  ]
+
+config :ueberauth, Ueberauth.Strategy.Google.OAuth,
+  client_id: System.get_env("GOOGLE_CONSUMER_KEY") || "516629363087-gr5ssthakel0sosmvmhaccpfgcu87jbd.apps.googleusercontent.com",
+  client_secret: System.get_env("GOOGLE_CONSUMER_SECRET") || "65dLz_u9fiij6dPlcI9Hkagh"
+
